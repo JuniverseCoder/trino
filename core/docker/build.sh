@@ -112,8 +112,10 @@ tar -C "${WORK_DIR}" -xzf "${WORK_DIR}/trino-server-${TRINO_VERSION}.tar.gz"
 rm "${WORK_DIR}/trino-server-${TRINO_VERSION}.tar.gz"
 cp -R bin "${WORK_DIR}/trino-server-${TRINO_VERSION}"
 cp -R default "${WORK_DIR}/"
+cp -R mucfc "${WORK_DIR}/"
 
 TAG_PREFIX="trino:${TRINO_VERSION}"
+JDK_VERSION=$(cat "${SOURCE_DIR}/.java-version")
 
 for arch in "${ARCHITECTURES[@]}"; do
     echo "🫙  Building the image for $arch with JDK ${JDK_VERSION}"
@@ -133,7 +135,7 @@ echo "🧹 Cleaning up the build context directory"
 rm -r "${WORK_DIR}"
 
 echo "🏃 Testing built images"
-source container-test.sh
+source ./container-test.sh
 
 for arch in "${ARCHITECTURES[@]}"; do
     # TODO: remove when https://github.com/multiarch/qemu-user-static/issues/128 is fixed

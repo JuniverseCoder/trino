@@ -80,7 +80,7 @@ public class TestParquetWriter
         assertThat(createdBy).startsWith("parquet-mr");
         VersionParser.ParsedVersion version = VersionParser.parse(createdBy);
         assertThat(version).isNotNull();
-        assertThat(version.application).isEqualTo("parquet-mr-trino");
+        assertThat(version.application).isEqualTo("parquet-mr");
         assertThat(version.version).isEqualTo("test-version");
         assertThat(version.appBuildHash).isEqualTo("n/a");
     }

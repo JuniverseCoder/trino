@@ -221,6 +221,12 @@ public class ParquetPageSourceFactory
             FileMetaData fileMetaData = parquetMetadata.getFileMetaData();
             fileSchema = fileMetaData.getSchema();
 
+            // modify timezone for impala
+            String fileCreatedBy = fileMetaData.getCreatedBy();
+            if (null == fileCreatedBy || !fileCreatedBy.startsWith("parquet-mr")) {
+                timeZone = DateTimeZone.UTC;
+            }
+
             Optional<MessageType> message = getParquetMessageType(columns, useColumnNames, fileSchema);
 
             requestedSchema = message.orElse(new MessageType(fileSchema.getName(), ImmutableList.of()));
@@ -266,12 +272,13 @@ public class ParquetPageSourceFactory
 
             ParquetDataSourceId dataSourceId = dataSource.getId();
             ParquetDataSource finalDataSource = dataSource;
+            DateTimeZone finalTimeZone = timeZone;
             ParquetReaderProvider parquetReaderProvider = fields -> new ParquetReader(
                     Optional.ofNullable(fileMetaData.getCreatedBy()),
                     fields,
                     rowGroups,
                     finalDataSource,
-                    timeZone,
+                    finalTimeZone,
                     memoryContext,
                     options,
                     exception -> handleException(dataSourceId, exception),

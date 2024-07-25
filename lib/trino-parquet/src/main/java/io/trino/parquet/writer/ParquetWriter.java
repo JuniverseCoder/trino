@@ -379,7 +379,11 @@ public class ParquetWriter
         // Add "(build n/a)" suffix to satisfy Parquet's VersionParser expectations
         // Apache Hive will skip timezone conversion if createdBy does not start with parquet-mr
         // https://github.com/apache/hive/blob/67ef629486ba38b1d3e0f400bee0073fa3c4e989/ql/src/java/org/apache/hadoop/hive/ql/io/parquet/ParquetRecordReaderBase.java#L154
-        return "parquet-mr-trino version " + trinoVersion + " (build n/a)";
+        // Modify to parquet-mr for impala
+        // https://github.com/apache/impala/blob/d01d028b0727fc36e66709e754cadbf8d89c6a21/be/src/exec/parquet/hdfs-parquet-scanner.cc#L3122
+        // https://github.com/apache/impala/blob/d01d028b0727fc36e66709e754cadbf8d89c6a21/be/src/exec/parquet/parquet-metadata-utils.cc#L481C27-L481C27
+
+        return "parquet-mr version " + trinoVersion + " (build n/a)";
     }
 
     private void initColumnWriters()
