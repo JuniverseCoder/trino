@@ -112,7 +112,12 @@ tar -C "${WORK_DIR}" -xzf "${WORK_DIR}/trino-server-${TRINO_VERSION}.tar.gz"
 rm "${WORK_DIR}/trino-server-${TRINO_VERSION}.tar.gz"
 cp -R bin "${WORK_DIR}/trino-server-${TRINO_VERSION}"
 cp -R default "${WORK_DIR}/"
-cp -R mucfc "${WORK_DIR}/"
+cp -R /root/deploy/trino-base "${WORK_DIR}/"
+cp -R /root/deploy/trino-hdfs "${WORK_DIR}/"
+cp /root/deploy/spark-oss/* "${WORK_DIR}/trino-hdfs"
+cp /root/deploy/spark-juicefs/* "${WORK_DIR}/trino-hdfs"
+cp /root/deploy/alluxio/* "${WORK_DIR}/trino-hdfs"
+cp -R /root/trino-ldap-group-provider/target/trino-ldap-group-provider-435 "${WORK_DIR}/ldap-group-provider"
 
 TAG_PREFIX="trino:${TRINO_VERSION}"
 JDK_VERSION=$(cat "${SOURCE_DIR}/.java-version")
