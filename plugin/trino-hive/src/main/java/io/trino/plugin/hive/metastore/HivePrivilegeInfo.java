@@ -28,6 +28,7 @@ import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.DEL
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.INSERT;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.SELECT;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.UPDATE;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.CREATE;
 import static java.util.Objects.requireNonNull;
 
 @Immutable
@@ -35,7 +36,8 @@ public class HivePrivilegeInfo
 {
     public enum HivePrivilege
     {
-        SELECT, INSERT, UPDATE, DELETE, OWNERSHIP
+        SELECT, INSERT, UPDATE, DELETE, OWNERSHIP, ALTER, CREATE, DROP, INDEX, LOCK, READ, WRITE
+
     }
 
     private final HivePrivilege hivePrivilege;
@@ -91,7 +93,8 @@ public class HivePrivilegeInfo
                 return DELETE;
             case UPDATE:
                 return UPDATE;
-            case CREATE:// Hive does not support CREATE privilege
+            case CREATE:
+                return CREATE;
             default:
                 throw new IllegalArgumentException("Unexpected privilege: " + privilege);
         }
@@ -116,6 +119,13 @@ public class HivePrivilegeInfo
             case UPDATE:
                 return ImmutableSet.of(new PrivilegeInfo(Privilege.UPDATE, isGrantOption()));
             case OWNERSHIP:
+            case ALTER:
+            case CREATE:
+            case DROP:
+            case INDEX:
+            case LOCK:
+            case READ:
+            case WRITE:
                 return ImmutableSet.of();
         }
         throw new IllegalArgumentException("Unsupported hivePrivilege: " + hivePrivilege);

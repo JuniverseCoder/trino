@@ -132,11 +132,18 @@ import static io.trino.plugin.hive.metastore.HiveColumnStatistics.createDecimalC
 import static io.trino.plugin.hive.metastore.HiveColumnStatistics.createDoubleColumnStatistics;
 import static io.trino.plugin.hive.metastore.HiveColumnStatistics.createIntegerColumnStatistics;
 import static io.trino.plugin.hive.metastore.HiveColumnStatistics.createStringColumnStatistics;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.ALTER;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.CREATE;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.DELETE;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.DROP;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.INDEX;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.INSERT;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.LOCK;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.OWNERSHIP;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.READ;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.SELECT;
 import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.UPDATE;
+import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.WRITE;
 import static io.trino.plugin.hive.metastore.thrift.ThriftMetastoreParameterParserUtils.toLong;
 import static io.trino.plugin.hive.metastore.thrift.ThriftSparkMetastoreUtil.getSparkBasicStatistics;
 import static io.trino.plugin.hive.type.Category.PRIMITIVE;
@@ -753,6 +760,13 @@ public final class ThriftMetastoreUtil
             case "UPDATE" -> ImmutableSet.of(new HivePrivilegeInfo(UPDATE, grantOption, grantor, grantee.orElse(grantor)));
             case "DELETE" -> ImmutableSet.of(new HivePrivilegeInfo(DELETE, grantOption, grantor, grantee.orElse(grantor)));
             case "OWNERSHIP" -> ImmutableSet.of(new HivePrivilegeInfo(OWNERSHIP, grantOption, grantor, grantee.orElse(grantor)));
+            case "ALTER" -> ImmutableSet.of(new HivePrivilegeInfo(ALTER, grantOption, grantor, grantee.orElse(grantor)));
+            case "CREATE" -> ImmutableSet.of(new HivePrivilegeInfo(CREATE, grantOption, grantor, grantee.orElse(grantor)));
+            case "DROP" -> ImmutableSet.of(new HivePrivilegeInfo(DROP, grantOption, grantor, grantee.orElse(grantor)));
+            case "INDEX" -> ImmutableSet.of(new HivePrivilegeInfo(INDEX, grantOption, grantor, grantee.orElse(grantor)));
+            case "LOCK" -> ImmutableSet.of(new HivePrivilegeInfo(LOCK, grantOption, grantor, grantee.orElse(grantor)));
+            case "READ" -> ImmutableSet.of(new HivePrivilegeInfo(READ, grantOption, grantor, grantee.orElse(grantor)));
+            case "WRITE" -> ImmutableSet.of(new HivePrivilegeInfo(WRITE, grantOption, grantor, grantee.orElse(grantor)));
             default -> throw new IllegalArgumentException("Unsupported privilege name: " + name);
         };
     }
