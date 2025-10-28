@@ -39,7 +39,6 @@ RUN \
     set -xeu && \
     echo -e "[ali_baseos]\nname=ali_baseos\nbaseurl=https://mirrors.aliyun.com/centos-stream/9-stream/BaseOS/x86_64/os/\ngpgcheck=0" > /etc/yum.repos.d/aliyun_yum.repo && \
     echo -e "\n[ali_appstream]\nname=ali_appstream\nbaseurl=https://mirrors.aliyun.com/centos-stream/9-stream/AppStream/x86_64/os/\ngpgcheck=0" >> /etc/yum.repos.d/aliyun_yum.repo && \
-    microdnf update -y && \
     microdnf install -y \
         tar \
         less \
@@ -68,6 +67,7 @@ COPY --chown=trino:trino trino-base/mysql-connector-java-8.0.29.jar /usr/lib/tri
 COPY --chown=trino:trino trino-base/limits.conf /etc/security/limits.conf
 COPY --chown=trino:trino trino-hdfs/*.jar /usr/lib/trino/plugin/hive/hdfs
 COPY --chown=trino:trino trino-hdfs/*.jar /usr/lib/trino/plugin/iceberg/hdfs
+COPY --chown=trino:trino trino-listener/*.jar /lib/trino/plugin/mysql-event-listener/
 COPY --chown=trino:trino ldap-group-provider /usr/lib/trino/plugin/ldap-group-provider
 
 
