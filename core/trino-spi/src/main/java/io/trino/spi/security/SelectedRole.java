@@ -27,10 +27,10 @@ public class SelectedRole
 {
     public enum Type
     {
-        ROLE, GROUP, ALL, NONE
+        ROLE, ALL, NONE
     }
 
-    private static final Pattern PATTERN = Pattern.compile("(ROLE|GROUP|ALL|NONE)(\\{(.+?)\\})?");
+    private static final Pattern PATTERN = Pattern.compile("(ROLE|ALL|NONE)(\\{(.+?)\\})?");
 
     private final Type type;
     private final Optional<String> role;
@@ -40,7 +40,7 @@ public class SelectedRole
     {
         this.type = requireNonNull(type, "type is null");
         this.role = requireNonNull(role, "role is null");
-        if ((type == Type.ROLE || type == Type.GROUP) && role.isEmpty()) {
+        if (type == Type.ROLE && role.isEmpty()) {
             throw new IllegalArgumentException("Role must be present for the selected role type: " + type);
         }
     }

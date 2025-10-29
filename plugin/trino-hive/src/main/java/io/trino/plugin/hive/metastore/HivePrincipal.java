@@ -39,13 +39,8 @@ public class HivePrincipal
         if (type == SelectedRole.Type.ALL) {
             return ofUser(identity.getUser());
         }
-        if (type == SelectedRole.Type.ROLE) {
-            return ofRole(identity.getConnectorRole().get().getRole().get());
-        }
-        if (type == SelectedRole.Type.GROUP) {
-            return ofGroup(identity.getConnectorRole().get().getRole().get());
-        }
-        throw new IllegalArgumentException("Unsupported SelectedRole type: " + type);
+        checkArgument(type == SelectedRole.Type.ROLE, "Expected role type to be ALL or ROLE, but got: %s", type);
+        return ofRole(identity.getConnectorRole().get().getRole().get());
     }
 
     private static HivePrincipal ofUser(String user)
