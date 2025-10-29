@@ -39,8 +39,13 @@ public class HivePrincipal
         if (type == SelectedRole.Type.ALL) {
             return ofUser(identity.getUser());
         }
-        checkArgument(type == SelectedRole.Type.ROLE, "Expected role type to be ALL or ROLE, but got: %s", type);
-        return ofRole(identity.getConnectorRole().get().getRole().get());
+        if (type == SelectedRole.Type.ROLE) {
+            return ofRole(identity.getConnectorRole().get().getRole().get());
+        }
+        if (type == SelectedRole.Type.GROUP) {
+            return ofGroup(identity.getConnectorRole().get().getRole().get());
+        }
+        throw new IllegalArgumentException("Unsupported SelectedRole type: " + type);
     }
 
     private static HivePrincipal ofUser(String user)
@@ -51,6 +56,11 @@ public class HivePrincipal
     private static HivePrincipal ofRole(String role)
     {
         return new HivePrincipal(PrincipalType.ROLE, role);
+    }
+
+    private static HivePrincipal ofGroup(String group)
+    {
+        return new HivePrincipal(PrincipalType.GROUP, group);
     }
 
     public static Set<HivePrincipal> from(Set<TrinoPrincipal> trinoPrincipals)
@@ -78,15 +88,14 @@ public class HivePrincipal
     private static String canonicalName(PrincipalType type, String name)
     {
         requireNonNull(name, "name is null");
-        switch (type) {
-            case USER:
+        return switch (type) {
+            case USER ->
                 // In Hive user names are case sensitive
-                return name;
-            case ROLE:
-                // In Hive role names are case insensitive
-                return name.toLowerCase(ENGLISH);
-        }
-        throw new IllegalArgumentException("Unsupported type: " + type);
+                    name;
+            case ROLE, GROUP ->
+                // In Hive role and group names are case insensitive
+                    name.toLowerCase(ENGLISH);
+        };
     }
 
     @JsonProperty

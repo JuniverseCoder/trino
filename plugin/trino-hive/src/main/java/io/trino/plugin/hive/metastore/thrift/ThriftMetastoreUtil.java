@@ -292,10 +292,13 @@ public final class ThriftMetastoreUtil
 
     public static Stream<HivePrincipal> listEnabledPrincipals(ConnectorIdentity identity, Function<HivePrincipal, Set<RoleGrant>> listRoleGrants)
     {
-        return Stream.concat(
-                Stream.of(new HivePrincipal(USER, identity.getUser())),
-                listEnabledRoles(identity, listRoleGrants)
-                        .map(role -> new HivePrincipal(ROLE, role)));
+        Stream<HivePrincipal> user = Stream.of(new HivePrincipal(USER, identity.getUser()));
+        Stream<HivePrincipal> groups = identity.getGroups().stream()
+                .map(group -> new HivePrincipal(GROUP, group));
+        Stream<HivePrincipal> roles = listEnabledRoles(identity, listRoleGrants)
+                .map(role -> new HivePrincipal(ROLE, role));
+        return Stream.of(user, groups, roles)
+                .flatMap(Function.identity());
     }
 
     public static boolean isRoleEnabled(ConnectorIdentity identity, Function<HivePrincipal, Set<RoleGrant>> listRoleGrants, String role)
