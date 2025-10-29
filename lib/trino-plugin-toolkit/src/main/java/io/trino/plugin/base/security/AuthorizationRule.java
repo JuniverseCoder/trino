@@ -33,6 +33,7 @@ public class AuthorizationRule
     private final Optional<Pattern> originalGroupPattern;
     private final Optional<Pattern> originalRolePattern;
     private final Optional<Pattern> newUserPattern;
+    private final Optional<Pattern> newGroupPattern;
     private final Optional<Pattern> newRolePattern;
     private final boolean allow;
 
@@ -42,14 +43,16 @@ public class AuthorizationRule
             @JsonProperty("original_group") @JsonAlias("originalGroup") Optional<Pattern> originalGroupPattern,
             @JsonProperty("original_role") @JsonAlias("originalRole") Optional<Pattern> originalRolePattern,
             @JsonProperty("new_user") @JsonAlias("newUser") Optional<Pattern> newUserPattern,
+            @JsonProperty("new_group") @JsonAlias("newGroup") Optional<Pattern> newGroupPattern,
             @JsonProperty("new_role") @JsonAlias("newRole") Optional<Pattern> newRolePattern,
             @JsonProperty("allow") Boolean allow)
     {
-        checkArgument(newUserPattern.isPresent() || newRolePattern.isPresent(), "At least one of new_use or new_role is required, none were provided");
+        checkArgument(newUserPattern.isPresent() || newGroupPattern.isPresent() || newRolePattern.isPresent(), "At least one of new_user, new_group, or new_role is required, none were provided");
         this.originalUserPattern = requireNonNull(originalUserPattern, "originalUserPattern is null");
         this.originalGroupPattern = requireNonNull(originalGroupPattern, "originalGroupPattern is null");
         this.originalRolePattern = requireNonNull(originalRolePattern, "originalRolePattern is null");
         this.newUserPattern = requireNonNull(newUserPattern, "newUserPattern is null");
+        this.newGroupPattern = requireNonNull(newGroupPattern, "newGroupPattern is null");
         this.newRolePattern = requireNonNull(newRolePattern, "newRolePattern is null");
         this.allow = firstNonNull(allow, TRUE);
     }
@@ -70,6 +73,7 @@ public class AuthorizationRule
         return switch (newPrincipal.getType()) {
             case USER -> newUserPattern.map(regex -> regex.matcher(newPrincipal.getName()).matches()).orElse(false);
             case ROLE -> newRolePattern.map(regex -> regex.matcher(newPrincipal.getName()).matches()).orElse(false);
+            case GROUP -> newGroupPattern.map(regex -> regex.matcher(newPrincipal.getName()).matches()).orElse(false);
         };
     }
 

@@ -147,6 +147,7 @@ import static io.trino.plugin.hive.metastore.HivePrivilegeInfo.HivePrivilege.WRI
 import static io.trino.plugin.hive.metastore.thrift.ThriftMetastoreParameterParserUtils.toLong;
 import static io.trino.plugin.hive.metastore.thrift.ThriftSparkMetastoreUtil.getSparkBasicStatistics;
 import static io.trino.plugin.hive.type.Category.PRIMITIVE;
+import static io.trino.spi.security.PrincipalType.GROUP;
 import static io.trino.spi.security.PrincipalType.ROLE;
 import static io.trino.spi.security.PrincipalType.USER;
 import static io.trino.spi.type.BigintType.BIGINT;
@@ -667,22 +668,18 @@ public final class ThriftMetastoreUtil
         return switch (principalType) {
             case USER -> io.trino.hive.thrift.metastore.PrincipalType.USER;
             case ROLE -> io.trino.hive.thrift.metastore.PrincipalType.ROLE;
+            case GROUP -> io.trino.hive.thrift.metastore.PrincipalType.GROUP;
         };
     }
 
     public static PrincipalType fromMetastoreApiPrincipalType(io.trino.hive.thrift.metastore.PrincipalType principalType)
     {
         requireNonNull(principalType, "principalType is null");
-        switch (principalType) {
-            case USER:
-                return USER;
-            case ROLE:
-                return ROLE;
-            case GROUP:
-                // TODO
-                break;
-        }
-        throw new IllegalArgumentException("Unsupported principal type: " + principalType);
+        return switch (principalType) {
+            case USER -> USER;
+            case ROLE -> ROLE;
+            case GROUP -> GROUP;
+        };
     }
 
     public static FieldSchema toMetastoreApiFieldSchema(Column column)
